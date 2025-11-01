@@ -1,0 +1,19 @@
+# Игнорировать виртуальное окружение
+.venv/
+
+# Кэш Python
+__pycache__/
+*.pyc
+
+# Конфиг или временные файлы
+config.json
+
+# Системные и IDE файлы
+.idea/
+.vscode/
+.DS_Store
+
+# Артефакты сборки
+build/
+dist/
+*.spec
