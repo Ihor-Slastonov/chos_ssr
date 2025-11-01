@@ -16,6 +16,9 @@ app = ctk.CTk()
 app.title("CHOS SSR")
 app.geometry('540x300')
 #------------------------------------------------------
+saved_path = helpers.check_config()
+display_path = saved_path if saved_path else 'No directory selected'
+
 
 #Переменные путей
 user_save_path= StringVar(value='No directory')
@@ -30,6 +33,7 @@ def select_user_save_files():
     folder = filedialog.askdirectory(title="Select your save files")
     user_save_path.set(folder)
     print(folder)
+    helpers.save_config(folder)
 
 #------------------------------------------------------
 #Labels
@@ -54,11 +58,4 @@ btn.grid(row=2, column=0, padx=(12,12), pady=6, sticky="w")
 
 app.mainloop()
 
-# user_path = r'F:\Ai\Dasha'
-#
-# def list_files(path):
-#     print(os.listdir(path))
-#
-#
-# list_files(user_path)
 
