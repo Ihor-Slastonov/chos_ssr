@@ -1,4 +1,5 @@
 import os
+import helpers
 
 import customtkinter as ctk
 from tkinter import StringVar
@@ -20,10 +21,15 @@ app.geometry('540x300')
 user_save_path= StringVar(value='No directory')
 
 #------------------------------------------------------
-#функции
+#FUNCTIONS & COMMANDS
+def zip_save_command():
+    folder_str = user_save_path.get()
+    helpers.zip_user_saves(folder_str)
+
 def select_user_save_files():
     folder = filedialog.askdirectory(title="Select your save files")
     user_save_path.set(folder)
+    print(folder)
 
 #------------------------------------------------------
 #Labels
@@ -33,9 +39,11 @@ label.grid(row=0, column=0, padx=(12,12), sticky="w")
 #------------------------------------------------------
 
 #BUTTONS
-btn = ctk.CTkButton(app,text="Select folfer",width=140, command=select_user_save_files)
-btn.grid(row=1, column=0, sticky="w")
+btn = ctk.CTkButton(app,text="Select folder",width=140, command=select_user_save_files)
+btn.grid(row=1, column=0, padx=(12,12), pady=6, sticky="w")
 
+btn = ctk.CTkButton(app,text="saves to zip",width=140, command=zip_save_command)
+btn.grid(row=2, column=0, padx=(12,12), pady=6, sticky="w")
 
 #------------------------------------------------------
 

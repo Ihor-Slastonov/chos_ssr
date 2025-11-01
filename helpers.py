@@ -1,8 +1,9 @@
 import os
 import json
+import glob
+import zipfile
 
 CONFIG_FILE = "config.json"
-
 
 def check_config():
     if os.path.exists(CONFIG_FILE):
@@ -17,7 +18,30 @@ def check_config():
             json.dump(default_config, f, indent=4)
         return default_config
 
-config = check_config()
 
-print(type(config))
-print(config.keys())
+def zip_user_saves(folder_path):
+    archive_name = "my_save_files.zip"
+    extension_pattern = '*.sav'
+
+    search_pattern = os.path.join(folder_path, extension_pattern)
+
+    sav_files = glob.glob(search_pattern)
+
+    if sav_files:
+        with zipfile.ZipFile(archive_name, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            print(f"Создание архива: {archive_name}")
+            for file_path in sav_files:
+                # zipf.write(путь_к_файлу, имя_файла_внутри_архива)
+                file_name = os.path.basename(file_path)
+                zipf.write(file_path, file_name)
+                print(f"  Добавлен: {file_name}")
+
+        print('complete')
+    else:
+        print(f"Файлы с расширением {extension_pattern} в папке {folder_path} не найдены.")
+
+
+
+
+
+
