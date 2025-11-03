@@ -20,6 +20,8 @@ app.grid_rowconfigure(0, weight=1)
 # --- КОНСТАНТЫ ЦВЕТА ---
 BUTTON_COLOR = "#1F7D53"
 BUTTON_HOVER_COLOR = "#1A6C49"
+
+LOG_TEXT_COLOR = "#42855B"
 # ------------------------
 
 # --- Шрифты кнопок ---
@@ -27,10 +29,15 @@ BUTTON_FONT = ctk.CTkFont(size=16, weight="bold")
 # ----------------------
 
 # ------- Загрузка путей -------------------------------
-saved_path = helpers.check_config()
+config_data = helpers.check_config()
+
+saved_path = config_data["user_saves_folder"]
 display_path = saved_path if saved_path else 'No directory selected'
 user_save_path = StringVar(value=display_path)
 
+#2 . Extension variable
+saved_extension = config_data["user_extension"]
+user_extension = StringVar(value=saved_extension)
 
 # ------------------------------------------------------
 
@@ -47,7 +54,8 @@ def log_message(message, is_error=False):
 
 def zip_save_command():
     folder_str = user_save_path.get()
-    helpers.zip_user_saves(folder_str, log_message)
+    extension = user_extension.get()
+    helpers.zip_user_saves(folder_str,extension, log_message)
 
 
 def unzip_save_command():
@@ -57,9 +65,12 @@ def unzip_save_command():
 
 def select_user_save_files():
     folder = filedialog.askdirectory(title="Select your save files")
-    user_save_path.set(folder)
-    helpers.save_config(folder, log_message)
+    if not folder:
+        return
 
+    user_save_path.set(folder)
+    extension = user_extension.get()
+    helpers.save_config(folder, extension, log_message)
 
 # ----------------------------------------------------------
 
@@ -108,6 +119,9 @@ main_frame.grid_rowconfigure(1, weight=1)
 log_title = ctk.CTkLabel(main_frame, text="Системный лог", font=ctk.CTkFont(size=14, weight="bold"))
 log_title.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="w")
 
+user_input = ctk.CTkEntry(main_frame, placeholder_text=".sav, .txt...", textvariable=user_extension)
+user_input.grid(row=0, column=0, padx=20, pady=10)
+
 # WIDGETS
 log_textbox = ctk.CTkTextbox(main_frame, width=500, height=300)
 log_textbox.grid(row=1, column=0, padx=10, pady=(5, 10), sticky="nsew")
@@ -119,10 +133,11 @@ else:
 log_textbox.configure(state="disabled")  # Запрещаем ручное редактирование
 
 # настройка цвета для логов
-log_textbox.tag_config("matrix_green", foreground="#00FF41")
+log_textbox.tag_config("matrix_green", foreground="#ffffff")
 log_textbox.tag_config("error_red", foreground="#FF6363")
 
 # -------------------------------------------------------------------------------------------------------
+
 
 
 app.mainloop()

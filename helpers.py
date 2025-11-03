@@ -6,42 +6,53 @@ import time
 
 CONFIG_FILE = "config.json"
 archive_name = "my_save_files.zip"
-extension_pattern = '*.sav'
+# extension_pattern = '*.sav'
 
 
 def check_config():
     """Проверяет наличие config.json и возвращает сохраненный путь."""
+    default_values = {
+        "user_saves_folder": "",
+        "user_extension": ""
+    }
     if os.path.exists(CONFIG_FILE):
         try:
             with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
                 config = json.load(f)
                 # Возвращаем сохраненный путь или пустую строку, если его нет
-                return config.get("user_saves_folder", "")
+                return {
+                    "user_saves_folder": config.get("user_saves_folder", ""),
+                    "user_extension": config.get("user_extension", "")
+                }
         except json.JSONDecodeError:
             # На случай, если файл поврежден
             return ""
     else:
         # Создаем конфиг с пустым путем, если его нет
-        default_config = {
-            "user_saves_folder": ""
-        }
+
         with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
-            json.dump(default_config, f, indent=4)
+            json.dump(default_values, f, indent=4)
         return ""
 
 
-def save_config(folder_path, log_func):
+def save_config(folder_path,extension, log_func):
     """Сохраняет переданный путь к папке в config.json."""
     config = {
-        "user_saves_folder": folder_path
+        "user_saves_folder": folder_path,
+        "user_extension": extension
     }
     with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
         json.dump(config, f, indent=4)
-    log_func(f"Новый путь сохранён Битчес:\n{folder_path}")
+    log_func(f"Новый путь и расширения сохранены Битчес:")
+    log_func(f"Папка: {folder_path}")
+    log_func(f"Расширение: {extension if extension != "" else 'БЛЯ НАПЕЧАТАЙ РАСШИРЕНИЕ ФАЙЛОВ'}")
 
 
-def zip_user_saves(folder_path, log_func):
-    search_pattern = os.path.join(folder_path, extension_pattern)
+def zip_user_saves(folder_path, extension, log_func):
+    if extension == "":
+        log_func("Не найдено файлы с расширением .Н И Х У Я")
+        return
+    search_pattern = os.path.join(folder_path, extension)
 
     sav_files = glob.glob(search_pattern)
 
