@@ -25,9 +25,13 @@ user_save_path= StringVar(value=display_path)
 
 #------------------------------------------------------
 #FUNCTIONS & COMMANDS
+folder_str = user_save_path.get()
+
 def zip_save_command():
-    folder_str = user_save_path.get()
     helpers.zip_user_saves(folder_str)
+
+def unzip_save_command():
+    helpers.unzip_user_saves(folder_str)
 
 def select_user_save_files():
     folder = filedialog.askdirectory(title="Select your save files")
@@ -48,6 +52,9 @@ btn.grid(row=1, column=0, padx=(12,12), pady=6, sticky="w")
 
 btn = ctk.CTkButton(app,text="saves to zip",width=140, command=zip_save_command)
 btn.grid(row=2, column=0, padx=(12,12), pady=6, sticky="w")
+
+btn = ctk.CTkButton(app,text="unzip to save",width=140, command=unzip_save_command)
+btn.grid(row=2, column=1, padx=(12,12), pady=6, sticky="w")
 
 #------------------------------------------------------
 

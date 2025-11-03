@@ -4,6 +4,9 @@ import glob
 import zipfile
 
 CONFIG_FILE = "config.json"
+archive_name = "my_save_files.zip"
+extension_pattern = '*.sav'
+
 
 def check_config():
     """Проверяет наличие config.json и возвращает сохраненный путь."""
@@ -25,6 +28,7 @@ def check_config():
             json.dump(default_config, f, indent=4)
         return ""
 
+
 def save_config(folder_path):
     """Сохраняет переданный путь к папке в config.json."""
     config = {
@@ -33,10 +37,8 @@ def save_config(folder_path):
     with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
         json.dump(config, f, indent=4)
 
-def zip_user_saves(folder_path):
-    archive_name = "my_save_files.zip"
-    extension_pattern = '*.sav'
 
+def zip_user_saves(folder_path):
     search_pattern = os.path.join(folder_path, extension_pattern)
 
     sav_files = glob.glob(search_pattern)
@@ -55,7 +57,16 @@ def zip_user_saves(folder_path):
         print(f"Файлы с расширением {extension_pattern} в папке {folder_path} не найдены.")
 
 
-
-
-
-
+def unzip_user_saves(folder_path):
+    if not folder_path or not os.path.isdir(folder_path):
+        print("Не допустим путь к папке, выбери бля нормально")
+        return
+    if os.path.exists(archive_name):
+        try:
+            with zipfile.ZipFile(archive_name, 'r') as zipf:
+                zipf.extractall(folder_path)
+                print(f"Распаковка завершена! Файлы извлечены в: {folder_path}")
+        except Exception as e:
+            print(f"Ошибка при распаковке: {e}")
+    else:
+        print(f"Ошибка: Архив {archive_name} не найден. Убедитесь, что он находится рядом с программой.")
