@@ -25,14 +25,14 @@ def check_config():
                     "user_extension": config.get("user_extension", "")
                 }
         except json.JSONDecodeError:
-            # На случай, если файл поврежден
-            return ""
+            # На случай, если файл поврежден или отсутсвует
+            pass
     else:
         # Создаем конфиг с пустым путем, если его нет
 
         with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
             json.dump(default_values, f, indent=4)
-        return ""
+        return default_values
 
 
 def save_config(folder_path,extension, log_func):
