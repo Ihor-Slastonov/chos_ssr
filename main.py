@@ -75,18 +75,22 @@ logo_label = ctk.CTkLabel(sidebar_frame, text="CHOS SSR", font=ctk.CTkFont(size=
 logo_label.grid(row=0, column=0, padx=20, pady=(20, 10), sticky='w')
 
 # Кнопки
-btn_select = ctk.CTkButton(sidebar_frame, text="Select folder", width=140,
+btn_select = ctk.CTkButton(sidebar_frame, text="Select Folder", width=140, height=40,
                            command=select_user_save_files, fg_color=BUTTON_COLOR, hover_color=BUTTON_HOVER_COLOR,
                            font=BUTTON_FONT)
-btn_select.grid(row=1, column=0, padx=20, pady=(10, 5), sticky="w")
+btn_select.grid(row=1, column=0, padx=20, pady=(10, 10), sticky="w")
 
-btn_zip = ctk.CTkButton(sidebar_frame, text="saves to zip", width=140, command=zip_save_command, fg_color=BUTTON_COLOR,
+btn_zip = ctk.CTkButton(sidebar_frame, text="Saves To Zip", width=140, height=40, command=zip_save_command,
+                        fg_color=BUTTON_COLOR,
                         hover_color=BUTTON_HOVER_COLOR,
                         font=BUTTON_FONT)
-btn_zip.grid(row=2, column=0, padx=20, pady=5, sticky="w")
+btn_zip.grid(row=2, column=0, padx=20, pady=10, sticky="w")
 
-btn_unzip = ctk.CTkButton(sidebar_frame, text="unzip to save", width=140, command=unzip_save_command,)
-btn_unzip.grid(row=3, column=0, padx=20, pady=5, sticky="w")
+btn_unzip = ctk.CTkButton(sidebar_frame, text="Unzip To Saves", width=140, height=40, command=unzip_save_command,
+                          fg_color=BUTTON_COLOR,
+                          hover_color=BUTTON_HOVER_COLOR,
+                          font=BUTTON_FONT)
+btn_unzip.grid(row=3, column=0, padx=20, pady=10, sticky="w")
 
 # ------------------------------------------------------
 
