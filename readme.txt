@@ -1,1 +1,3 @@
-pyinstaller -F -w main.py - make .exe file
+#make .exe file
+pyinstaller -F -w main.py
+#--------------
