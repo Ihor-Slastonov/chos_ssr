@@ -17,12 +17,51 @@ app.minsize(700, 400)
 app.grid_columnconfigure(1, weight=1)
 app.grid_rowconfigure(0, weight=1)
 # ------------------------------------------------------
+# --- КОНСТАНТЫ ЦВЕТА ---
+BUTTON_COLOR = "#1F7D53"
+BUTTON_HOVER_COLOR = "#1A6C49"
+# ------------------------
+
+# --- Шрифты кнопок ---
+BUTTON_FONT = ctk.CTkFont(size=16, weight="bold")
+# ----------------------
+
 # ------- Загрузка путей -------------------------------
 saved_path = helpers.check_config()
 display_path = saved_path if saved_path else 'No directory selected'
 user_save_path = StringVar(value=display_path)
 
+
 # ------------------------------------------------------
+
+# FUNCTIONS & COMMANDS
+
+def log_message(message, is_error=False):
+    tag = "error_red" if is_error else "matrix_green"
+
+    log_textbox.configure(state='normal')
+    log_textbox.insert("end", f"\n{message}\n", tag)
+    log_textbox.see("end")  # Прокрутка к последней строке
+    log_textbox.configure(state="disabled")
+
+
+def zip_save_command():
+    folder_str = user_save_path.get()
+    helpers.zip_user_saves(folder_str, log_message)
+
+
+def unzip_save_command():
+    folder_str = user_save_path.get()
+    helpers.unzip_user_saves(folder_str, log_message)
+
+
+def select_user_save_files():
+    folder = filedialog.askdirectory(title="Select your save files")
+    user_save_path.set(folder)
+    helpers.save_config(folder, log_message)
+
+
+# ----------------------------------------------------------
 
 # ======================================================
 # 1. ЛЕВАЯ ПАНЕЛЬ (SIDEBAR FRAME)
@@ -37,13 +76,16 @@ logo_label.grid(row=0, column=0, padx=20, pady=(20, 10), sticky='w')
 
 # Кнопки
 btn_select = ctk.CTkButton(sidebar_frame, text="Select folder", width=140,
-                           command=lambda: select_user_save_files)
+                           command=select_user_save_files, fg_color=BUTTON_COLOR, hover_color=BUTTON_HOVER_COLOR,
+                           font=BUTTON_FONT)
 btn_select.grid(row=1, column=0, padx=20, pady=(10, 5), sticky="w")
 
-btn_zip = ctk.CTkButton(sidebar_frame, text="saves to zip", width=140, command=lambda: zip_save_command)
+btn_zip = ctk.CTkButton(sidebar_frame, text="saves to zip", width=140, command=zip_save_command, fg_color=BUTTON_COLOR,
+                        hover_color=BUTTON_HOVER_COLOR,
+                        font=BUTTON_FONT)
 btn_zip.grid(row=2, column=0, padx=20, pady=5, sticky="w")
 
-btn_unzip = ctk.CTkButton(sidebar_frame, text="unzip to save", width=140, command=lambda: unzip_save_command)
+btn_unzip = ctk.CTkButton(sidebar_frame, text="unzip to save", width=140, command=unzip_save_command,)
 btn_unzip.grid(row=3, column=0, padx=20, pady=5, sticky="w")
 
 # ------------------------------------------------------
@@ -67,41 +109,16 @@ log_textbox = ctk.CTkTextbox(main_frame, width=500, height=300)
 log_textbox.grid(row=1, column=0, padx=10, pady=(5, 10), sticky="nsew")
 log_textbox.insert("end", "Добро пожаловать CHOS_овцы\n", "matrix_green")
 if display_path != 'No directory selected':
-    log_textbox.insert("end", f"\nТекущая папка сохранений: {display_path}", "matrix_green")
+    log_textbox.insert("end", f"\nТекущая папка сохранений: {display_path}\n", "matrix_green")
 else:
-    log_textbox.insert("end", "\nНу выбери папку а.", "matrix_green")
+    log_textbox.insert("end", "\nНу выбери папку а.\n", "matrix_green")
 log_textbox.configure(state="disabled")  # Запрещаем ручное редактирование
 
 # настройка цвета для логов
 log_textbox.tag_config("matrix_green", foreground="#00FF41")
+log_textbox.tag_config("error_red", foreground="#FF6363")
 
 # -------------------------------------------------------------------------------------------------------
-# FUNCTIONS & COMMANDS
-folder_str = user_save_path.get()
 
-
-def log_message(message):
-    log_textbox.configure(state='normal')
-    log_textbox.insert("end", f"\n{message}", "matrix_green")
-    log_textbox.see("end")  # Прокрутка к последней строке
-    log_textbox.configure(state="disabled")
-
-
-def zip_save_command():
-    helpers.zip_user_saves(folder_str)
-
-
-def unzip_save_command():
-    helpers.unzip_user_saves(folder_str)
-
-
-def select_user_save_files():
-    folder = filedialog.askdirectory(title="Select your save files")
-    user_save_path.set(folder)
-    print(folder)
-    helpers.save_config(folder)
-
-
-# ----------------------------------------------------------
 
 app.mainloop()
