@@ -21,7 +21,7 @@ display_path = saved_path if saved_path else 'No directory selected'
 
 
 #Переменные путей
-user_save_path= StringVar(value='No directory')
+user_save_path= StringVar(value=display_path)
 
 #------------------------------------------------------
 #FUNCTIONS & COMMANDS
