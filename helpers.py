@@ -1,12 +1,14 @@
 import os
 import json
 import glob
+import sys
 import zipfile
 import time
+import subprocess
 
 CONFIG_FILE = "config.json"
 archive_name = "my_save_files.zip"
-# extension_pattern = '*.sav'
+extension_pattern = '*.sav'
 
 
 def check_config():
@@ -49,10 +51,10 @@ def save_config(folder_path,extension, log_func):
 
 
 def zip_user_saves(folder_path, extension, log_func):
-    if extension == "":
+    if not extension or not extension.startswith("."):
         log_func("Не найдено файлы с расширением .Н И Х У Я")
         return
-    search_pattern = os.path.join(folder_path, extension)
+    search_pattern = os.path.join(folder_path, f'*{extension}')
 
     sav_files = glob.glob(search_pattern)
 
@@ -72,7 +74,7 @@ def zip_user_saves(folder_path, extension, log_func):
         except Exception as e:
             log_func(f"Ошибка при создании архива: {e}", is_error=True)
     else:
-        log_func(f"Файлы с расширением {extension_pattern} в папке {folder_path} не найдены.", is_error=True)
+        log_func(f"Файлы с расширением {extension} в папке {folder_path} не найдены.", is_error=True)
 
 
 def unzip_user_saves(folder_path, log_func):
@@ -89,3 +91,18 @@ def unzip_user_saves(folder_path, log_func):
     else:
         log_func(f"Ошибка: Архив {archive_name} не найден. Убедитесь, что он находится рядом с программой.",
                  is_error=True)
+
+
+def open_user_saves(folder_path, log_func):
+    if not folder_path or not os.path.isdir(folder_path):
+        log_func("Ты бля на приколе? Бро", is_error=True)
+        return
+
+    try:
+        if os.name == "nt": #Windows
+            os.startfile(folder_path)
+        else:
+            log_func('Не понимаю шо за ОП', is_error=True)
+            return
+    except Exception as e:
+        log_func(f"Ошибка при открытии папки: {e}", is_error=True)
