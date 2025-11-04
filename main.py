@@ -72,9 +72,7 @@ def select_user_save_files():
     helpers.save_config(folder, extension, log_message)
 
 def open_folder_command():
-    # folder_str = user_save_path.get()
-    # helpers.open_user_saves(folder_str, log_message)
-    app_dir = os.path.dirname(os.path.abspath(__file__))
+    app_dir = os.getcwd()
     helpers.open_user_saves(app_dir, log_message)
 # ----------------------------------------------------------
 
