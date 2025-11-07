@@ -6,21 +6,19 @@ R2_ENDPOINT_URL = 'https://9f6ea06c6fb4f78c8a3fbe9bc3bef9ef.r2.cloudflarestorage
 
 BUCKET_NAME = 'savegames'
 
-s3_client = boto3.client(
-    service_name='s3',
-    endpoint_url=R2_ENDPOINT_URL,
-    aws_access_key_id=R2_ACCESS_KEY_ID,
-    aws_secret_access_key=R2_SECRET_ACCESS_KEY
-)
-
-
-
-
 
 def r2_upload(file_path, archive_name, log_func, ):
     log_func(file_path, archive_name)
     try:
-        log_func("start uploading")
+        log_func("подключаюсь к серверу")
+        s3_client = boto3.client(
+            service_name='s3',
+            endpoint_url=R2_ENDPOINT_URL,
+            aws_access_key_id=R2_ACCESS_KEY_ID,
+            aws_secret_access_key=R2_SECRET_ACCESS_KEY
+        )
+
+        log_func("Пошел грузить змей")
         s3_client.upload_file(
             Filename=archive_name,
             Bucket=BUCKET_NAME,
@@ -36,6 +34,13 @@ def r2_download(full_local_path, archive_name, log_func):
     log_func(f"Попытка скачать файл '{archive_name}' в '{full_local_path}'")
 
     try:
+        log_func("подключаюсь к серверу")
+        s3_client = boto3.client(
+            service_name='s3',
+            endpoint_url=R2_ENDPOINT_URL,
+            aws_access_key_id=R2_ACCESS_KEY_ID,
+            aws_secret_access_key=R2_SECRET_ACCESS_KEY
+        )
         log_func("Начало скачивания...")
 
         # --- Ключевое изменение: используем download_file ---
