@@ -24,6 +24,9 @@ app.grid_rowconfigure(0, weight=1)
 BUTTON_COLOR = "#1F7D53"
 BUTTON_HOVER_COLOR = "#1A6C49"
 
+SECONDARY_BUTTON_COLOR= '#EF7722'
+SECONDARY_BUTTON_HOVER_COLOR= '#F97A00'
+
 LOG_TEXT_COLOR = "#42855B"
 # ------------------------
 
@@ -195,8 +198,8 @@ r2_buttons_frame.columnconfigure(1, weight=1)
 # Кнопка: Загрузить на R2
 btn_r2_upload = ctk.CTkButton(r2_buttons_frame, text="Upload Saves to R2 ⬆️", height=40,
                               command=upload_archive_r2,
-                              fg_color=BUTTON_COLOR,
-                              hover_color=BUTTON_HOVER_COLOR,
+                              fg_color=SECONDARY_BUTTON_COLOR,
+                              hover_color=SECONDARY_BUTTON_HOVER_COLOR,
                               font=BUTTON_FONT)
 btn_r2_upload.grid(row=0, column=0, padx=(0, 5), pady=0, sticky="ew")
 
