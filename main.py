@@ -5,6 +5,9 @@ import customtkinter as ctk
 from tkinter import StringVar
 from tkinter import filedialog
 
+from r2client import r2_upload
+from r2client import r2_download
+
 # Внешний вид
 ctk.set_appearance_mode('dark')
 ctk.set_default_color_theme('green')
@@ -13,7 +16,7 @@ ctk.set_default_color_theme('green')
 app = ctk.CTk()
 app.title("CHOS SSR")
 app.geometry('800x450')
-app.minsize(700, 400)
+app.minsize(700, 450)
 app.grid_columnconfigure(1, weight=1)
 app.grid_rowconfigure(0, weight=1)
 # ------------------------------------------------------
@@ -35,9 +38,10 @@ saved_path = config_data["user_saves_folder"]
 display_path = saved_path if saved_path else 'No directory selected'
 user_save_path = StringVar(value=display_path)
 
-#2 . Extension variable
+# 2 . Extension variable
 saved_extension = config_data["user_extension"]
 user_extension = StringVar(value=saved_extension)
+
 
 # ------------------------------------------------------
 
@@ -55,7 +59,7 @@ def log_message(message, is_error=False):
 def zip_save_command():
     folder_str = user_save_path.get()
     extension = user_extension.get()
-    helpers.zip_user_saves(folder_str,extension, log_message)
+    helpers.zip_user_saves(folder_str, extension, log_message)
 
 
 def unzip_save_command():
@@ -71,9 +75,27 @@ def select_user_save_files():
     extension = user_extension.get()
     helpers.save_config(folder, extension, log_message)
 
+
 def open_folder_command():
     app_dir = os.getcwd()
     helpers.open_user_saves(app_dir, log_message)
+
+
+def upload_archive_r2():
+    zip_save_command()
+    file_path = os.getcwd()
+    archive_name = "my_save_files.zip"
+    r2_upload(file_path, archive_name, log_message)
+
+
+def download_archive_r2():
+    file_path = os.getcwd()
+    archive_name = "my_save_files.zip"
+    full_path = os.path.join(file_path, archive_name)
+    r2_download(full_path, archive_name, log_message)
+    unzip_save_command()
+
+
 # ----------------------------------------------------------
 
 # ======================================================
@@ -94,10 +116,9 @@ btn_select = ctk.CTkButton(sidebar_frame, text="Select Folder", width=140, heigh
 btn_select.grid(row=1, column=0, padx=20, pady=(10, 10), sticky="w")
 
 btn_open = ctk.CTkButton(sidebar_frame, text="Zip Folder", width=140, height=40,
-                           command=open_folder_command, fg_color=BUTTON_COLOR, hover_color=BUTTON_HOVER_COLOR,
-                           font=BUTTON_FONT)
+                         command=open_folder_command, fg_color=BUTTON_COLOR, hover_color=BUTTON_HOVER_COLOR,
+                         font=BUTTON_FONT)
 btn_open.grid(row=2, column=0, padx=20, pady=10, sticky="w")
-
 
 btn_zip = ctk.CTkButton(sidebar_frame, text="Saves To Zip", width=140, height=40, command=zip_save_command,
                         fg_color=BUTTON_COLOR,
@@ -111,28 +132,27 @@ btn_unzip = ctk.CTkButton(sidebar_frame, text="Unzip To Saves", width=140, heigh
                           font=BUTTON_FONT)
 btn_unzip.grid(row=4, column=0, padx=20, pady=10, sticky="w")
 
-
-
-
 # ======================================================
 # 1.1. ВЛОЖЕННЫЙ ФРЕЙМ ДЛЯ РАСШИРЕНИЯ (внизу Sidebar)
 # ======================================================
-extension_frame = ctk.CTkFrame(sidebar_frame, fg_color="transparent") # 'transparent' чтобы не было лишних рамок
-extension_frame.grid(row=5, column=0, padx=20, pady=(40,10), sticky="s") # Размещаем внизу (sticky="s")
-extension_frame.columnconfigure(0, weight=1) # Чтобы элементы внутри расширялись
+extension_frame = ctk.CTkFrame(sidebar_frame, fg_color="transparent")  # 'transparent' чтобы не было лишних рамок
+extension_frame.grid(row=5, column=0, padx=20, pady=(40, 10), sticky="s")  # Размещаем внизу (sticky="s")
+extension_frame.columnconfigure(0, weight=1)  # Чтобы элементы внутри расширялись
 
 # 1. Заголовок
-extension_label = ctk.CTkLabel(extension_frame, text="Extension (start with '.' )", font=ctk.CTkFont(size=12, weight="normal"))
+extension_label = ctk.CTkLabel(extension_frame, text="Extension (start with '.' )",
+                               font=ctk.CTkFont(size=12, weight="normal"))
 extension_label.grid(row=0, column=0, padx=(0, 5), pady=(0, 2), sticky="w")
 
 # 2. Поле ввода
 user_input = ctk.CTkEntry(extension_frame, placeholder_text=".sav, .txt...", textvariable=user_extension, width=140)
-user_input.grid(row=1, column=0, padx=0, pady=(0, 5), sticky="ew") # sticky="ew" - растягиваем
+user_input.grid(row=1, column=0, padx=0, pady=(0, 5), sticky="ew")  # sticky="ew" - растягиваем
 
 # 3. Кнопка "Сохранить" рядом с инпутом?
 # Если кнопка должна быть под инпутом, как "Select Folder"
 btn_save_ext = ctk.CTkButton(extension_frame, text="Save Ext", width=140, height=30,
-                             command=lambda: helpers.save_config(user_save_path.get(), user_extension.get(), log_message),
+                             command=lambda: helpers.save_config(user_save_path.get(), user_extension.get(),
+                                                                 log_message),
                              fg_color=BUTTON_COLOR,
                              hover_color=BUTTON_HOVER_COLOR,
                              font=ctk.CTkFont(size=12, weight="bold"))
@@ -152,11 +172,41 @@ main_frame = ctk.CTkFrame(app, corner_radius=0)
 main_frame.grid(row=0, column=1, sticky="nsew", padx=5, pady=5)
 main_frame.grid_columnconfigure(0, weight=1)
 main_frame.grid_rowconfigure(1, weight=1)
+main_frame.grid_rowconfigure(2, weight=0)  # R2 фрейм не растягивается
 
 log_title = ctk.CTkLabel(main_frame, text="Системный лог", font=ctk.CTkFont(size=14, weight="bold"))
 log_title.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="w")
 
+# ======================================================
+# 3. КОМПАКТНЫЙ ФРЕЙМ R2 (ТОЛЬКО ДВЕ КНОПКИ)
+# ======================================================
+r2_frame = ctk.CTkFrame(main_frame, corner_radius=8, fg_color="#2A2D2E")
+# Размещаем его в строке 2. Снова уменьшаем pady до минимума для прижатия.
+r2_frame.grid(row=2, column=0, padx=10, pady=(0, 5), sticky="ew")
+r2_frame.grid_columnconfigure(0, weight=1)
 
+# ФРЕЙМ С КНОПКАМИ R2
+r2_buttons_frame = ctk.CTkFrame(r2_frame, fg_color="transparent")
+
+r2_buttons_frame.grid(row=0, column=0, padx=5, pady=3, sticky="ew")
+r2_buttons_frame.columnconfigure(0, weight=1)
+r2_buttons_frame.columnconfigure(1, weight=1)
+
+# Кнопка: Загрузить на R2
+btn_r2_upload = ctk.CTkButton(r2_buttons_frame, text="Upload Saves to R2 ⬆️", height=40,
+                              command=upload_archive_r2,
+                              fg_color=BUTTON_COLOR,
+                              hover_color=BUTTON_HOVER_COLOR,
+                              font=BUTTON_FONT)
+btn_r2_upload.grid(row=0, column=0, padx=(0, 5), pady=0, sticky="ew")
+
+# Кнопка: Скачать с R2
+btn_r2_download = ctk.CTkButton(r2_buttons_frame, text="Download Saves from R2 ⬇️", height=40,
+                                command=download_archive_r2,
+                                fg_color=BUTTON_COLOR,
+                                hover_color=BUTTON_HOVER_COLOR,
+                                font=BUTTON_FONT)
+btn_r2_download.grid(row=0, column=1, padx=(5, 0), pady=0, sticky="ew")
 
 # WIDGETS
 log_textbox = ctk.CTkTextbox(main_frame, width=500, height=300)
@@ -178,7 +228,6 @@ log_textbox.tag_config("matrix_green", foreground="#ffffff")
 log_textbox.tag_config("error_red", foreground="#FF6363")
 
 # -------------------------------------------------------------------------------------------------------
-
 
 
 app.mainloop()
