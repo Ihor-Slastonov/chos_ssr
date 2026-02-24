@@ -8,6 +8,8 @@ from tkinter import filedialog
 from r2client import r2_upload
 from r2client import r2_download
 
+from ui.settings_panel import SettingsPanel
+
 # Внешний вид
 ctk.set_appearance_mode('dark')
 ctk.set_default_color_theme('green')
@@ -177,9 +179,18 @@ main_frame.grid_columnconfigure(0, weight=1)
 main_frame.grid_rowconfigure(1, weight=1)
 main_frame.grid_rowconfigure(2, weight=0)  # R2 фрейм не растягивается
 
-log_title = ctk.CTkLabel(main_frame, text="Системный лог", font=ctk.CTkFont(size=14, weight="bold"))
-log_title.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="w")
+top_bar = ctk.CTkFrame(main_frame, fg_color="transparent")
+top_bar.grid(row=0, column=0, sticky="ew", padx=10, pady=(10, 0))
+top_bar.grid_columnconfigure(0, weight=1)
 
+log_title = ctk.CTkLabel(top_bar, text="Системный лог",
+                         font=ctk.CTkFont(size=14, weight="bold"))
+log_title.grid(row=0, column=0, sticky="w")
+
+settings = SettingsPanel(app)
+btn_settings = ctk.CTkButton(top_bar, text='⚙', width=32, height=32)
+btn_settings.grid(row=0, column=1, sticky="e")
+btn_settings.configure(command=settings.toggle)
 # ======================================================
 # 3. КОМПАКТНЫЙ ФРЕЙМ R2 (ТОЛЬКО ДВЕ КНОПКИ)
 # ======================================================
